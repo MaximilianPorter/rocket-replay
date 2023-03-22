@@ -1,4 +1,4 @@
-# Rocket Replays
+# Rocket Replays (not active)
 
 This is a public api that I made to simplify the process of retriving Rocket League replay file data to web developers through POST api calls. The process is conducted on this server to decode the replay data using the [rrrocket](https://github.com/nickbabcock/rrrocket)
 
@@ -17,9 +17,8 @@ Parses Rocket League replay files and outputs JSON with decoded information
 ```js
 async function sendData(file) {
   const formData = new FormData();
-  // data must be named "replay"
   formData.append("replay", file, file.name);
-  const res = await fetch(serverEndpoint, {
+  const res = await fetch(`https://rocketreplays.herokuapp.com/api/uploads`, {
     method: "POST",
     body: formData,
   });
@@ -56,7 +55,7 @@ A sample output of the JSON from rrrocket:
 ```
 
 If network parsed is enabled then an attribute (snipped) looks something like:
-_endpoint: `rocketreplays.com/api/uploads?network=true`_
+_endpoint: `https://rocketreplays.herokuapp.com/api/uploads?network=true`_
 
 ```json
 {

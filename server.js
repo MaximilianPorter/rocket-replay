@@ -9,6 +9,8 @@ const path = require("path");
 
 deleteAllUploads();
 
+const endpoint = "/api/uploads";
+
 // Create a rate limiter with a maximum of 100 requests per hour per IP address
 const limiter = require("express-rate-limit")({
   windowMs: 60 * 60 * 1000, // 1 hour
@@ -57,7 +59,16 @@ const uploadSingle = upload.single("replay");
 app.use(limiter);
 app.use(cors());
 
-app.post("/upload?:n", (req, res) => {
+function getRoute(req, res) {
+  res.send(
+    `Welcome to the Rocket League Replay Parser API, please use a POST request to the endpoint ${req.host}/api/uploads to upload a replay file`
+  );
+}
+
+app.get(`${endpoint}`, getRoute);
+app.get(`/`, getRoute);
+
+app.post(`${endpoint}?:n`, (req, res) => {
   uploadSingle(req, res, (err) => {
     // return if file is not correct
     if (err) {
