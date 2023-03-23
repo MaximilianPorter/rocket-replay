@@ -61,7 +61,7 @@ app.use(cors());
 
 function getRoute(req, res) {
   res.send(
-    `Welcome to the Rocket League Replay Parser API, please use a POST request to the endpoint ${req.hostname}/api/uploads to upload a replay file`
+    `Welcome 1 to the Rocket League Replay Parser API, please use a POST request to the endpoint ${req.hostname}/api/uploads to upload a replay file`
   );
 }
 
@@ -83,7 +83,8 @@ app.post(`${endpoint}?:n`, (req, res) => {
     }
 
     const args = ["-p"];
-    const command = "rrrocket";
+    const command = `${__dirname}/rrrocket.exe`;
+    console.log(command);
 
     // check post url for network parse flag
     const networkParse = req.url.includes("network=true");
@@ -95,7 +96,9 @@ app.post(`${endpoint}?:n`, (req, res) => {
     args.push(`${req.file.path}`);
 
     // Spawn a new process with the rrrocket command and arguments
-    const rrrocketProcess = runCommand(command, args);
+    const rrrocketProcess = runCommand(command, args, {
+      env: { ...process.env, NODE_ENV: "test" },
+    });
 
     // Capture the output of the command
     let output = "";
@@ -106,6 +109,15 @@ app.post(`${endpoint}?:n`, (req, res) => {
     // Handle errors from the command
     rrrocketProcess.stderr.on("data", (data) => {
       console.error(`Error: ${data}`);
+    });
+
+    rrrocketProcess.on("error", (error) => {
+      console.error("Error:", error);
+    });
+    rrrocketProcess.on("exit", (code, signal) => {
+      console.log(
+        `Child process exited with code ${code} and signal ${signal}`
+      );
     });
 
     // Handle the completion of the command
