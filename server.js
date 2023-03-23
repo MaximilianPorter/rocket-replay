@@ -1,4 +1,4 @@
-// const { exec, spawn: runCommand } = require("child_process");
+const { exec, spawn: runCommand } = require("child_process");
 const fs = require("fs");
 // make express app
 const express = require("express");
