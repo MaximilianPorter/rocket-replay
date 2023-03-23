@@ -83,7 +83,7 @@ app.post(`${endpoint}?:n`, (req, res) => {
     }
 
     const args = ["-p"];
-    const command = `${__dirname}/rrrocket.exe`;
+    const command = `${__dirname}/rrrocket`;
     console.log(command);
 
     // check post url for network parse flag
