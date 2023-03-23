@@ -132,6 +132,7 @@ async function deleteAllUploads() {
   const directory = `${__dirname}/uploads/`;
 
   if (!fs.existsSync(directory)) {
+    console.log("Uploads folder does not exist, creating...");
     fs.mkdirSync(directory);
   }
 
@@ -140,6 +141,7 @@ async function deleteAllUploads() {
       if (err) throw err;
 
       for (const file of files) {
+        if (file === ".gitkeep") continue;
         fs.unlink(path.join(directory, file), (err) => {
           if (err) throw err;
         });
