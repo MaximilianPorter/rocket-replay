@@ -25,7 +25,7 @@ const limiter = require("express-rate-limit")({
 const multer = require("multer");
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "./uploads"); // specify the directory to save uploaded files
+    cb(null, `${__dirname}/uploads`); // specify the directory to save uploaded files
   },
   filename: function (req, file, cb) {
     cb(null, file.originalname); // use the original filename for uploaded files
@@ -129,7 +129,7 @@ app.post(`${endpoint}?:n`, (req, res) => {
 });
 
 async function deleteAllUploads() {
-  const directory = `./uploads/`;
+  const directory = `${__dirname}/uploads/`;
 
   if (!fs.existsSync(directory)) {
     fs.mkdirSync(directory);
