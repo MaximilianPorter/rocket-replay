@@ -1,4 +1,4 @@
-const { exec, spawn: runCommand } = require("child_process");
+// const { exec, spawn: runCommand } = require("child_process");
 const fs = require("fs");
 // make express app
 const express = require("express");
@@ -7,7 +7,7 @@ const server = require("http").Server(app);
 const cors = require("cors");
 const path = require("path");
 
-deleteAllUploads();
+// deleteAllUploads();
 
 const endpoint = "/api/uploads";
 
@@ -61,94 +61,96 @@ app.use(cors());
 
 function getRoute(req, res) {
   res.send(
-    `Welcome to the Rocket League Replay Parser API, please use a POST request to the endpoint ${req.host}/api/uploads to upload a replay file`
+    `Welcome to the Rocket League Replay Parser API, please use a POST request to the endpoint ${req.hostname}/api/uploads to upload a replay file`
   );
 }
 
 app.get(`${endpoint}`, getRoute);
 app.get(`/`, getRoute);
 
-app.post(`${endpoint}?:n`, (req, res) => {
-  uploadSingle(req, res, (err) => {
-    // return if file is not correct
-    if (err) {
-      console.log("ERROR IS HAPPENING!");
-      if (!req.file || !req || !req.isValidFile) {
-        return res.status(500).send({
-          success: false,
-          message:
-            "Format is incorrect, ensure that the file is a .replay and that the FormData value for the file in the body is named 'replay'",
-        });
-      }
-    }
+// app.post(`${endpoint}?:n`, (req, res) => {
+//   uploadSingle(req, res, (err) => {
+//     // return if file is not correct
+//     if (err) {
+//       console.log("ERROR IS HAPPENING!");
+//       if (!req.file || !req || !req.isValidFile) {
+//         return res.status(500).send({
+//           success: false,
+//           message:
+//             "Format is incorrect, ensure that the file is a .replay and that the FormData value for the file in the body is named 'replay'",
+//         });
+//       }
+//     }
 
-    const args = ["-p"];
-    const command = "rrrocket";
+//     const args = ["-p"];
+//     const command = "rrrocket";
 
-    // check post url for network parse flag
-    const networkParse = req.url.includes("network=true");
-    if (networkParse) {
-      args.push("-n");
-    }
+//     // check post url for network parse flag
+//     const networkParse = req.url.includes("network=true");
+//     if (networkParse) {
+//       args.push("-n");
+//     }
 
-    // add the file path to the arguments
-    args.push(`${req.file.path}`);
+//     // add the file path to the arguments
+//     args.push(`${req.file.path}`);
 
-    // Spawn a new process with the rrrocket command and arguments
-    const rrrocketProcess = runCommand(command, args);
+//     // Spawn a new process with the rrrocket command and arguments
+//     const rrrocketProcess = runCommand(command, args);
 
-    // Capture the output of the command
-    let output = "";
-    rrrocketProcess.stdout.on("data", (data) => {
-      output += data.toString();
-    });
+//     // Capture the output of the command
+//     let output = "";
+//     rrrocketProcess.stdout.on("data", (data) => {
+//       output += data.toString();
+//     });
 
-    // Handle errors from the command
-    rrrocketProcess.stderr.on("data", (data) => {
-      console.error(`Error: ${data}`);
-    });
+//     // Handle errors from the command
+//     rrrocketProcess.stderr.on("data", (data) => {
+//       console.error(`Error: ${data}`);
+//     });
 
-    // Handle the completion of the command
-    rrrocketProcess.on("close", (code) => {
-      if (code === 0) {
-        // Send the output to the client
-        res.status(201).send(output);
-        console.log("Command completed successfully!");
+//     // Handle the completion of the command
+//     rrrocketProcess.on("close", (code) => {
+//       if (code === 0) {
+//         // Send the output to the client
+//         res.status(201).send(output);
+//         console.log("Command completed successfully!");
 
-        // Delete the uploaded file
-        fs.unlinkSync(req.file.path);
-      } else {
-        console.error(`Command failed with code ${code}`);
-        res.status(500).send({
-          success: false,
-          message: "Something went wrong",
-        });
-      }
-    });
-  });
-});
+//         // Delete the uploaded file
+//         fs.unlinkSync(req.file.path);
+//       } else {
+//         console.error(`Command failed with code ${code}`);
+//         res.status(500).send({
+//           success: false,
+//           message: "Something went wrong",
+//         });
+//       }
+//     });
+//   });
+// });
+
+// async function deleteAllUploads() {
+//   const directory = `${__dirname}/uploads/`;
+
+//   try {
+//     fs.readdir(directory, (err, files) => {
+//       if (err) throw err;
+
+//       for (const file of files) {
+//         fs.unlink(path.join(directory, file), (err) => {
+//           if (err) throw err;
+//         });
+//       }
+//     });
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
 
 // Start the server
 let port = process.env.PORT || 3000;
-server.listen(port);
-
-async function deleteAllUploads() {
-  const directory = `${__dirname}/uploads/`;
-
-  try {
-    fs.readdir(directory, (err, files) => {
-      if (err) throw err;
-
-      for (const file of files) {
-        fs.unlink(path.join(directory, file), (err) => {
-          if (err) throw err;
-        });
-      }
-    });
-  } catch (error) {
-    console.log(error);
-  }
-}
+server.listen(port, () => {
+  console.log(`Server listening at port ${port}`);
+});
 
 /*
 
